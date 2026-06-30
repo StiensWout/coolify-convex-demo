@@ -11,7 +11,10 @@ This repo is a small WSConsult deployment proof for the full app path:
 ## Names
 
 - App slug: `coolify-convex-demo`
+- GitHub repo: `https://github.com/StiensWout/coolify-convex-demo`
 - Coolify project/environment: `WSConsult` / `production`
+- Coolify app UUID: `hn3ssblv198prau8jxj4zkts`
+- Coolify Convex service UUID: `xl7xdofbco7sslugfn5tdiy1`
 - Public app hostname: `coolify-convex-demo.wsconsult.work`
 - Public Convex client hostname: `convex-coolify-convex-demo.wsconsult.work`
 - Convex dashboard hostname: `convex-coolify-convex-demo-dashboard.wsconsult.work`
@@ -62,9 +65,36 @@ for this demo.
 Required self-hosted Convex settings are stored only in Coolify secrets and the
 root-only deploy credential note on `wsconsult-deploy-01`.
 
+The deployed Convex service contains:
+
+- `backend`: `ghcr.io/get-convex/convex-backend:latest`, routed through
+  `https://convex-coolify-convex-demo.wsconsult.work`
+- `dashboard`: `ghcr.io/get-convex/convex-dashboard:latest`, routed through
+  `https://convex-coolify-convex-demo-dashboard.wsconsult.work`
+- `postgres`: `postgres:17-alpine`, with app-specific database
+  `coolify_convex_demo`
+
+The dashboard hostname is protected by a dedicated Cloudflare Access
+self-hosted application named `coolify-convex-demo Convex dashboard`. The
+browser-facing Convex client hostname is intentionally public and does not use
+Cloudflare service-token headers.
+
 ## Validation
 
-After deployment:
+Validated on 2026-06-30:
+
+- Local `npm run build` passed for the Next.js app.
+- `npx convex deploy` pushed the schema and functions to
+  `https://convex-coolify-convex-demo.wsconsult.work`.
+- Coolify deployment `ygvb4fj1jc9wk856cbw6fyl6` finished successfully.
+- `https://coolify-convex-demo.wsconsult.work/healthz` returned `ok`.
+- `https://convex-coolify-convex-demo.wsconsult.work/version` returned `200`.
+- `https://convex-coolify-convex-demo-dashboard.wsconsult.work` returned a
+  Cloudflare Access login redirect.
+- Browser validation loaded the public app, saw `Live Convex read`, and the
+  `Ping Convex` action incremented `Browser writes` from `10` to `11`.
+
+Manual checks:
 
 1. Open `https://coolify-convex-demo.wsconsult.work`.
 2. Confirm the status badge shows `Live Convex read`.
